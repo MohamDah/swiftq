@@ -8,6 +8,7 @@ export default function Admin() {
   const { qId, adminId } = useParams()
   const navigate = useNavigate()
   const [queue, setQueue] = useState(null as QueueType | null)
+  const [showQR, setShowQR] = useState(false) 
 
   onValue(ref(db, `queues/${qId}`), snapshot => {
     const queueData = snapshot.val()
@@ -45,6 +46,16 @@ export default function Admin() {
     }
   }
 
+  if (showQR) {
+    const ownUrl = new URL(window.location.href).origin
+    return (
+      <div className="mt-24 p-2 border-2 border-primary-purple rounded-lg">
+        <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${ownUrl}/${qId}&size=150x150`} alt="" />
+
+      </div>
+    )
+  }
+
   return (
     <>
       <h2 className="text-primary-purple mt-20">There
@@ -63,7 +74,9 @@ export default function Admin() {
       </div>
 
       <button className="rect bg-primary-purple text-white mt-12">Invite next visitor</button>
-      <button className="rect bg-secondary-purple text-primary-purple mt-6">Skip</button>
+      <button className="rect text-primary-purple mt-6">Skip</button>
+      <button className="text-primary-purple font-semibold underline mt-6"
+      onClick={() => setShowQR(true)}>Show QR code</button>
     </>
   )
 
