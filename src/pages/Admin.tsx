@@ -1,4 +1,4 @@
-import { onValue, ref, set } from "firebase/database"
+import { onValue, ref, remove, set } from "firebase/database"
 import { useNavigate, useParams } from "react-router-dom"
 import { db } from "../firebase"
 import { useEffect, useState } from "react"
@@ -9,6 +9,8 @@ export default function Admin() {
   const navigate = useNavigate()
   const [queue, setQueue] = useState(null as QueueType | null)
   const [showQR, setShowQR] = useState(false)
+  const [confClose, setConfClose] = useState(false)
+
 
   onValue(ref(db, `queues/${qId}`), snapshot => {
     const queueData = snapshot.val()
@@ -61,6 +63,19 @@ export default function Admin() {
     )
   }
 
+  function closeQueue() {
+    if (queue) {
+      remove(ref(db, `queues/${qId}`))
+      navigate("/")
+    }
+  }
+
+  function toggleConf() {
+    setConfClose(true)
+    setTimeout(() => setConfClose(false), 5000)
+  }
+
+
   return (
     <>
       <img src={qrUrl} className="hidden"></img>
@@ -80,8 +95,14 @@ export default function Admin() {
       </div>
 
       <button className="rect bg-primary-purple text-white mt-12"
-      onClick={inviteNext}>Invite next visitor</button>
-      <button className="rect text-primary-purple mt-6">Skip</button>
+        onClick={inviteNext}>Invite next visitor</button>
+      {
+        !confClose
+          ? <button className="rect text-primary-purple mt-6"
+            onClick={toggleConf}>Close Queue</button>
+          : <button className="rect text-white bg-red-500 mt-6 border-red-500"
+            onClick={closeQueue}>Are you sure?</button>
+      }
       <button className="text-primary-purple font-semibold underline mt-6"
         onClick={() => setShowQR(true)}>Show QR code</button>
     </>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { db } from "../firebase"
 import { onValue, ref, runTransaction, set } from "firebase/database"
 import { useNavigate, useParams } from "react-router-dom"
@@ -15,6 +15,8 @@ export default function InQueue() {
   onValue(ref(db, `queues/${qId}`), snapshot => {
     const queueData = snapshot.val()
     if (queueData === null) {
+      delete myQueues[qId]
+      localStorage.setItem("myQueues", JSON.stringify(myQueues))
       navigate("/")
     }
 
@@ -50,9 +52,13 @@ export default function InQueue() {
 
   let myPosition = 0
   if (Array.isArray(queue.participants)) {
-    const startInd = queue.currentPosition > 100 ? queue.participants.indexOf(queue.currentPosition) : 0
-    const endInd = queue.participants.indexOf(myQueues[qId])
-    myPosition = queue.participants.slice(startInd, endInd).length
+    if (queue.currentPosition > 100) {
+      const startInd = queue.participants.indexOf(queue.currentPosition)
+      const endInd = queue.participants.indexOf(myQueues[qId])
+      myPosition = queue.participants.slice(startInd, endInd).length
+    } else {
+      myPosition = queue.participants.length
+    }
   }
 
   if (!myQueues[qId]) {
@@ -77,6 +83,7 @@ export default function InQueue() {
     }
   }
 
+  
   return (
     <>
       <div className={`w-10/12 max-w-sm aspect-square border-[24px] rounded-full mt-28 ${myPosition > 0 ? "border-primary-purple" : "border-primary-green"}`}>
@@ -90,8 +97,9 @@ export default function InQueue() {
           <p>-{myPosition > 0 ? "almost there!" : "You're invited!"}</p>
         </div>
       </div>
-      <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
-      onClick={quitQueue}>Quit Queue</button>
+      
+        <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
+        onClick={quitQueue}>Quit Queue</button>
     </>
   )
 
