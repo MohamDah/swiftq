@@ -1,0 +1,44 @@
+import { useRef } from "react"
+import logo from "../assets/logo.png"
+import { useNavigate } from "react-router-dom"
+import { randStr } from "../utils"
+import { ref, set } from "firebase/database"
+import { db } from "../firebase"
+
+export default function Create() {
+  const qNameRef = useRef(null as null | HTMLInputElement)
+  const navigate = useNavigate()
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const qId = Math.floor(Math.random() * (999999 - 100001) + 100000);
+    const adminId = randStr()
+
+    if (qNameRef.current) {
+
+      const queueObj = {
+        currentPosition: 100,
+        adminId: adminId,
+        queueName: qNameRef.current.value,
+        participants: false,
+      }
+      
+      const setResponse = await set(ref(db, `queues/${qId}`), queueObj)
+      
+      navigate(`/a/${qId}/${adminId}`)
+    }
+  }
+  return (
+    <>
+      <img className="w-1/4 max-w-40 mt-20"
+        src={logo} alt="Logo" />
+
+      <form className="w-full flex flex-col items-center mt-14"
+      onSubmit={handleSubmit}>
+        <input className="rect px-3 text-primary-purple placeholder:text-primary-purple/70 focus:outline-primary-purple" type="text" placeholder="Queue name" ref={qNameRef} />
+        <button className="rect bg-primary-purple text-white mt-6">Create</button>
+      </form>
+    </>
+  )
+}

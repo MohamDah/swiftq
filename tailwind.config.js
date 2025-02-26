@@ -5,7 +5,19 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          purple: "#8C52FF"
+        },
+        secondary: {
+          purple: "#DECDFF"
+        }
+      },
+      fontFamily: {
+        inter: ['"Inter"', 'serif']
+      }
+    },
   },
   plugins: [],
 }

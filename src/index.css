@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components{
+  .rect {
+    @apply w-9/12 py-4 max-w-md border border-primary-purple rounded-lg font-bold
+  }
+}

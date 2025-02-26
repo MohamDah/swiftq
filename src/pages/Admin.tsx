@@ -14,7 +14,7 @@ export default function Admin() {
     if (queueData === null) {
       navigate("/")
     }
-    
+
     if (!queue || (queue.participants && queueData.participants.length !== queue.participants.length)) {
       setQueue(queueData)
     }
@@ -33,7 +33,7 @@ export default function Admin() {
     let currInd = queue.participants && queue.participants.indexOf(queue.currentPosition)
     custsLeft = queue.participants ? queue.participants.slice(currInd === -1 ? 0 : currInd + 1).length : 0
   } else {
-    custsLeft = 0 
+    custsLeft = 0
   }
 
   function inviteNext() {
@@ -47,8 +47,30 @@ export default function Admin() {
 
   return (
     <>
+      <h2 className="text-primary-purple mt-20">There
+        {
+          custsLeft === 1
+            ? <> is <span className="font-bold">{custsLeft} visitor</span> </>
+            : <> are <span className="font-bold">{custsLeft} visitors</span> </>
+        }
+        waiting
+      </h2>
+
+      <h1 className="font-bold text-xl mt-16">Invited visitor number</h1>
+
+      <div className="bg-secondary-purple text-primary-purple text-8xl font-bold py-4 w-9/12 max-w-64 text-center mt-10">
+        017
+      </div>
+
+      <button className="rect bg-primary-purple text-white mt-12">Invite next visitor</button>
+      <button className="rect bg-secondary-purple text-primary-purple mt-6">Skip</button>
+    </>
+  )
+
+  return (
+    <>
       <p>{custsLeft} in the queue</p>
-      <p>Current Number: {queue.currentPosition}</p>
+      {/* <p>Current Number: {queue.currentPosition}</p> */}
       <button onClick={inviteNext}>Invite Next Guest</button>
     </>
   )

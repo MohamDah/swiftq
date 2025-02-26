@@ -9,6 +9,7 @@ import {
 import Home from './pages/Home'
 import Admin from './pages/Admin'
 import InQueue from './pages/InQueue'
+import Join from './pages/Create'
 
 
 function App() {
@@ -17,13 +18,16 @@ function App() {
       <Route path='/' element={<Home />} />
       <Route path='/a/:qId/:adminId' element={<Admin />} />
       <Route path='/:qId' element={<InQueue />} />
+      <Route path='/create' element={<Join />} />
       <Route path='*' element={<Navigate to={"/"} />} />
     </>
   ))
 
   return (
     <>
+    <main className='font-inter w-full max-w-4xl mx-auto mb-8 flex flex-col items-center'>
       <RouterProvider router={router} />
+    </main>
     </>
   )
 }

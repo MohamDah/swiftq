@@ -4,12 +4,13 @@ import { db } from "../firebase"
 import { onValue, ref, set } from "firebase/database"
 import { randStr } from "../utils"
 import { useNavigate } from "react-router-dom"
+import logo from "../assets/logo.png"
 
 export default function Home() {
   const qNameRef = useRef(null as any)
   const navigate = useNavigate()
 
-  
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     console.log(qNameRef.current.value)
@@ -31,12 +32,19 @@ export default function Home() {
 
   }
 
-  async function listData() {
-  }
 
-  onValue(ref(db, "queues/587046"), snapshot => {
-    console.log(snapshot.val())
-  })
+  return (
+    <>
+      <h1 className="my-20 text-primary-purple font-bold">WELCOME</h1>
+      <img className="w-1/4 max-w-40"
+        src={logo} alt="Logo" />
+
+      <button className="rect bg-secondary-purple text-primary-purple mt-14"
+        >Join Queue</button>
+      <button className="rect bg-primary-purple text-white mt-6"
+      onClick={() => navigate("/create")}>Setup Queue</button>
+    </>
+  )
 
   return (
     <>
@@ -46,7 +54,7 @@ export default function Home() {
         <input name="queueName" type="text" ref={qNameRef} />
         <button className="">Submit</button>
       </form>
-      <button onClick={listData}>list data</button>
+      <button>list data</button>
     </>
   )
 }
