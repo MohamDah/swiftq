@@ -55,19 +55,24 @@ export default function InQueue() {
     )
   }
 
-  let aheadCount = 0
+  let myPosition = 0
   if (Array.isArray(queue.participants)) {
     const startInd = queue.currentPosition > 100 ? queue.participants.indexOf(queue.currentPosition) : 0
-    console.log(aheadCount)
     const endInd = queue.participants.indexOf(myQueues[qId])
-    aheadCount = queue.participants.slice(startInd, endInd).length - 1
+    myPosition = queue.participants.slice(startInd, endInd).length
   }
 
   return (
     <>
+      <button></button>
+    </>
+  )
+
+  return (
+    <>
       <h1>Your Number {myQueues[qId]}</h1>
-      {aheadCount > -1
-        ? <h1>There are {aheadCount} people ahead of you</h1>
+      {myPosition > -1
+        ? <h1>There are {myPosition} people ahead of you</h1>
         : <h1>It's your turn</h1>}
     </>
   )

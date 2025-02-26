@@ -45,16 +45,4 @@ export default function Home() {
       onClick={() => navigate("/create")}>Setup Queue</button>
     </>
   )
-
-  return (
-    <>
-      <h1>Home page</h1>
-      <form className="*:border" onSubmit={handleSubmit}>
-        <label>Enter Queue Name</label>
-        <input name="queueName" type="text" ref={qNameRef} />
-        <button className="">Submit</button>
-      </form>
-      <button>list data</button>
-    </>
-  )
 }
