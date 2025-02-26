@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import logo from "../assets/logo.png"
 import { useNavigate } from "react-router-dom"
 import { randStr } from "../utils"
@@ -8,9 +8,11 @@ import { db } from "../firebase"
 export default function Create() {
   const qNameRef = useRef(null as null | HTMLInputElement)
   const navigate = useNavigate()
+  const [btnDisabled, setBtnDisabled] = useState(false)
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setBtnDisabled(true)
 
     const qId = Math.floor(Math.random() * (999999 - 100001) + 100000);
     const adminId = randStr()
@@ -37,7 +39,8 @@ export default function Create() {
       <form className="w-full flex flex-col items-center mt-14"
       onSubmit={handleSubmit}>
         <input className="rect px-3 text-primary-purple placeholder:text-primary-purple/70 focus:outline-primary-purple" type="text" placeholder="Queue name" ref={qNameRef} />
-        <button className="rect bg-primary-purple text-white mt-6">Create</button>
+        <button className="rect bg-primary-purple text-white mt-6"
+        disabled={btnDisabled}>Create</button>
       </form>
     </>
   )

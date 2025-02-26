@@ -6,6 +6,7 @@ import { QueueType } from "../types"
 
 export default function InQueue() {
   const [queue, setQueue] = useState(null as QueueType | null)
+  const [btnDisabled, setBtnDisabled] = useState(false)
   const { qId } = useParams() as { qId: string }
   const navigate = useNavigate()
 
@@ -27,12 +28,13 @@ export default function InQueue() {
 
   if (!queue) return <h1>Loading...</h1>
 
-  function insertToQ() {
+  async function insertToQ() {
     if (!queue) return
-    console.log(queue)
+
+    setBtnDisabled(true)
 
     const queueRef = ref(db, `queues/${qId}`)
-    runTransaction(queueRef, (currentQueue) => {
+    await runTransaction(queueRef, (currentQueue) => {
       if (currentQueue !== null) {
         if (!currentQueue.participants) {
           myQueues[qId] = 101
@@ -44,6 +46,7 @@ export default function InQueue() {
       }
 
       localStorage.setItem("myQueues", JSON.stringify(myQueues))
+      setBtnDisabled(false)
 
       return currentQueue
     })
@@ -60,30 +63,32 @@ export default function InQueue() {
       myPosition = queue.participants.length
     }
   }
-
+  
+  
+  const frmtMyPosition = myPosition.toString().at(-1) === "1" ? myPosition + "st" : myPosition.toString().at(-1) === "2" ? myPosition + "nd" : myPosition.toString().at(-1) === "3" ? myPosition + "rd" : myPosition + "th"
+  
+  async function quitQueue() {
+    if (myQueues[qId] && queue?.participants){
+      const newQueue = {...queue}
+      newQueue.participants = queue.participants.filter(i => i !== myQueues[qId])
+      setQueue(newQueue)
+      delete myQueues[qId]
+      localStorage.setItem("myQueues", JSON.stringify(myQueues))
+      set(ref(db, `queues/${qId}`), newQueue)
+      navigate("/")
+    }
+  }
+  
+  
   if (!myQueues[qId]) {
     return (
       <>
         <p className="mt-36 text-primary-purple font-bold">You are about to join queue: "{queue.queueName}"</p>
         <button className="rect mt-6"
-          onClick={insertToQ}>Join</button>
+          onClick={insertToQ} disabled={btnDisabled}>Join</button>
       </>
     )
   }
-
-  const frmtMyPosition = myPosition.toString().at(-1) === "1" ? myPosition + "st" : myPosition.toString().at(-1) === "2" ? myPosition + "nd" : myPosition.toString().at(-1) === "3" ? myPosition + "rd" : myPosition + "th"
-
-  async function quitQueue() {
-    if (myQueues[qId] && queue?.participants){
-      setQueue({...queue, participants: queue.participants.filter(i => i !== myQueues[qId])})
-      delete myQueues[qId]
-      localStorage.setItem("myQueues", JSON.stringify(myQueues))
-      set(ref(db, `queues/${qId}`), queue)
-      navigate("/")
-    }
-  }
-
-  
   return (
     <>
       <div className={`w-10/12 max-w-sm aspect-square border-[24px] rounded-full mt-28 ${myPosition > 0 ? "border-primary-purple" : "border-primary-green"}`}>

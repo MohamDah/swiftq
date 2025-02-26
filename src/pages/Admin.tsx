@@ -58,7 +58,7 @@ export default function Admin() {
           <img src={qrUrl} alt="" />
         </div>
         <button className="rect mt-8 text-primary-purple"
-          onClick={() => setShowQR(false)}>Return</button>
+          onClick={() => setShowQR(false)}>Go Back</button>
       </>
     )
   }
@@ -72,7 +72,7 @@ export default function Admin() {
 
   function toggleConf() {
     setConfClose(true)
-    setTimeout(() => setConfClose(false), 5000)
+    setTimeout(() => setConfClose(false), 3000)
   }
 
 
