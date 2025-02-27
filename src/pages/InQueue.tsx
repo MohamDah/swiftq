@@ -72,9 +72,9 @@ export default function InQueue() {
       const newQueue = {...queue}
       newQueue.participants = queue.participants.filter(i => i !== myQueues[qId])
       setQueue(newQueue)
+      myQueues[qId] !== queue.currentPosition && set(ref(db, `queues/${qId}`), newQueue)
       delete myQueues[qId]
       localStorage.setItem("myQueues", JSON.stringify(myQueues))
-      set(ref(db, `queues/${qId}`), newQueue)
       navigate("/")
     }
   }
