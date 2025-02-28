@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom"
 import { db } from "../firebase"
 import { useEffect, useState } from "react"
 import { QueueType } from "../types"
+import Loading from "../components/Loading"
+import NotFound from "../components/NotFound"
 
 export default function Admin() {
   const { qId, adminId } = useParams()
@@ -10,33 +12,38 @@ export default function Admin() {
   const [queue, setQueue] = useState(null as QueueType | null)
   const [showQR, setShowQR] = useState(false)
   const [confClose, setConfClose] = useState(false)
+  const [errMessage, setErrMessage] = useState(false as false | string)
 
-
-  onValue(ref(db, `queues/${qId}`), snapshot => {
-    const queueData = snapshot.val()
-    if (queueData === null) {
-      navigate("/")
-    }
-
-    if (!queue || (queue.participants && queueData.participants.length !== queue.participants.length)) {
-      setQueue(queueData)
-    }
-  })
 
   useEffect(() => {
-    if (queue && adminId !== queue.adminId) {
-      navigate("/")
+    const queueRef = ref(db, `queues/${qId}`)
+    const unsubscribe = onValue(queueRef, snapshot => {
+      const queueData = snapshot.val()
+      if (queueData === null && !errMessage) {
+        setErrMessage("Queue not found")
+        return
+      }
+
+      setQueue(queueData)
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    if (queue && adminId !== queue.adminId && !errMessage) {
+      setErrMessage("Queue not found")
     }
-  }, [queue])
+  }, [queue, adminId, errMessage])
 
-  if (!queue) return <h1>Loading</h1>
+  if (errMessage) {
+    return <NotFound message={errMessage} />
+  }
 
-  let custsLeft
-  if (queue.participants) {
-    let currInd = queue.participants && queue.participants.indexOf(queue.currentPosition)
-    custsLeft = queue.participants ? queue.participants.slice(currInd === -1 ? 0 : currInd + 1).length : 0
-  } else {
-    custsLeft = 0
+  if (!queue) {
+    return (
+      <Loading />
+    )
   }
 
   function inviteNext() {
@@ -47,6 +54,27 @@ export default function Admin() {
       set(ref(db, `queues/${qId}`), queue)
     }
   }
+
+  function closeQueue() {
+    if (queue) {
+      remove(ref(db, `queues/${qId}`))
+      navigate("/")
+    }
+  }
+
+  function toggleConf() {
+    setConfClose(true)
+    setTimeout(() => setConfClose(false), 3000)
+  }
+
+  let custsLeft
+  if (queue.participants) {
+    let currInd = queue.participants && queue.participants.indexOf(queue.currentPosition)
+    custsLeft = queue.participants ? queue.participants.slice(currInd === -1 ? 0 : currInd + 1).length : 0
+  } else {
+    custsLeft = 0
+  }
+
 
   const ownUrl = new URL(window.location.href).origin
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${ownUrl}/${qId}&size=150x150`
@@ -62,19 +90,6 @@ export default function Admin() {
       </>
     )
   }
-
-  function closeQueue() {
-    if (queue) {
-      remove(ref(db, `queues/${qId}`))
-      navigate("/")
-    }
-  }
-
-  function toggleConf() {
-    setConfClose(true)
-    setTimeout(() => setConfClose(false), 3000)
-  }
-
 
   return (
     <>
@@ -94,8 +109,15 @@ export default function Admin() {
         {queue.currentPosition}
       </div>
 
-      <button className="rect bg-primary-purple text-white mt-12"
-        onClick={inviteNext}>Invite next visitor</button>
+      <button className={"rect bg-primary-purple text-white mt-12" + (custsLeft > 0 ? "" : " opacity-40")}
+        onClick={inviteNext} disabled={!custsLeft}>
+        {
+          custsLeft > 0
+            ? "Invite next visitor"
+            : "Queue is empty"
+        }
+      </button>
+
       {
         !confClose
           ? <button className="rect text-primary-purple mt-6"
@@ -108,11 +130,4 @@ export default function Admin() {
     </>
   )
 
-  return (
-    <>
-      <p>{custsLeft} in the queue</p>
-      {/* <p>Current Number: {queue.currentPosition}</p> */}
-      <button onClick={inviteNext}>Invite Next Guest</button>
-    </>
-  )
 }

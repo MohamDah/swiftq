@@ -10,6 +10,7 @@ import Home from './pages/Home'
 import Admin from './pages/Admin'
 import InQueue from './pages/InQueue'
 import Join from './pages/Create'
+import NotFound from './components/NotFound'
 
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
       <Route path='/a/:qId/:adminId' element={<Admin />} />
       <Route path='/:qId' element={<InQueue />} />
       <Route path='/create' element={<Join />} />
-      <Route path='*' element={<Navigate to={"/"} />} />
+      <Route path='*' element={<NotFound message='Page does not exist' />} />
     </>
   ))
 

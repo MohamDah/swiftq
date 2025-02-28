@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { randStr } from "../utils"
 import { ref, set } from "firebase/database"
 import { db } from "../firebase"
+import { QueueType } from "../types"
 
 export default function Create() {
   const qNameRef = useRef(null as null | HTMLInputElement)
@@ -19,16 +20,22 @@ export default function Create() {
 
     if (qNameRef.current) {
 
-      const queueObj = {
+      const queueObj : QueueType = {
         currentPosition: 100,
         adminId: adminId,
         queueName: qNameRef.current.value,
         participants: false,
+        waitTimes: [0],
+        enterTimes: {init: 1}
       }
-      
-      const setResponse = await set(ref(db, `queues/${qId}`), queueObj)
-      
-      navigate(`/a/${qId}/${adminId}`)
+
+      try {
+        await set(ref(db, `queues/${qId}`), queueObj)
+        navigate(`/a/${qId}/${adminId}`)
+      } catch (err) {
+        console.log("failed to make queue")
+      }
+
     }
   }
   return (
@@ -37,10 +44,10 @@ export default function Create() {
         src={logo} alt="Logo" />
 
       <form className="w-full flex flex-col items-center mt-14"
-      onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}>
         <input className="rect px-3 text-primary-purple placeholder:text-primary-purple/70 focus:outline-primary-purple" type="text" placeholder="Queue name" ref={qNameRef} />
         <button className="rect bg-primary-purple text-white mt-6"
-        disabled={btnDisabled}>Create</button>
+          disabled={btnDisabled}>Create</button>
       </form>
     </>
   )
