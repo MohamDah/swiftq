@@ -30,19 +30,6 @@ export default function Admin() {
     return () => unsubscribe()
   }, [])
 
-  // useEffect(() => {
-  //   // What I'm trying to do here is, when it reaches the guest's turn, 
-  //   // it calculates the length of time they spent in the queue in seconds, 
-  //   // and insert it into queue.waitTimes
-  //   if (queue) {
-  //     const newQueue = {...queue}
-  //     let timeSecs = new Date().getTime() - newQueue.enterTimes[queue.currentPosition]
-  //     timeSecs = timeSecs / 1000
-  //     newQueue.waitTimes.push(timeSecs)
-  //     delete newQueue.enterTimes[queue.currentPosition]
-  //     set(ref(db, `queues/${qId}`), newQueue)
-  //   }
-  // }, [queue?.currentPosition])
 
 
   useEffect(() => {
@@ -114,7 +101,8 @@ export default function Admin() {
   return (
     <>
       <img src={qrUrl} className="hidden"></img>
-      <h2 className="text-primary-purple mt-20">There
+      <h2 className="mt-20 text-primary-purple font-bold"><i className="fa-solid fa-location-dot"></i> {queue.queueName}</h2>
+      <h2 className="text-primary-purple mt-2">There
         {
           custsLeft === 1
             ? <> is <span className="font-bold">{custsLeft} visitor</span> </>
@@ -128,7 +116,7 @@ export default function Admin() {
           ? qrComponent
           :
           <>
-            <h1 className="font-bold text-xl mt-16">Invited visitor number</h1>
+            <h1 className="font-bold text-xl mt-6">Invited visitor number</h1>
 
             <div className="bg-secondary-purple text-primary-purple text-8xl font-bold py-4 w-9/12 max-w-64 text-center mt-10">
               {queue.currentPosition}

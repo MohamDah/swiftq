@@ -23,7 +23,7 @@ export default function Create() {
       const queueObj : QueueType = {
         currentPosition: 100,
         adminId: adminId,
-        queueName: qNameRef.current.value,
+        queueName: qNameRef.current.value ? qNameRef.current.value : "Unnamed",
         participants: false,
         waitTimes: [0],
         enterTimes: {init: 1}

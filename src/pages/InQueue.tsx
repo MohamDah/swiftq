@@ -132,12 +132,16 @@ export default function InQueue() {
       </>
     )
   }
+
+  const blobCls = myPosition > 0 ? "blob" : !end ? "blob-green" : ""
   return (
     <>
-      <p className="mt-28 w-10/12 max-w-sm"><i className="fa-solid fa-location-dot"></i> {queue.queueName}</p>
-      
-      <div className={`relative w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full transition-all duration-1000 ${myPosition > 0 ? "border-primary-purple" : !end ? "border-primary-green" : "border-transparent"}`}>
-        <div className="w-full h-full flex flex-col items-center justify-center gap-1 xs:gap-5 text-center">
+      <p className={"mt-20 w-10/12 max-w-sm font-bold " + (myPosition > 0 ? "text-primary-purple" : "text-primary-green") + (end ? " invisible" : "")}>
+      <i className="fa-solid fa-location-dot"></i> {queue.queueName}
+      </p>
+
+      <div className={`${blobCls} relative w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full transition-all duration-500 ${myPosition > 0 ? "border-primary-purple" : !end ? "border-primary-green" : "border-transparent"}`}>
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 xs:gap-5 text-center py-8">
           {
             end
               ? <h1 className="text-3xl xs:text-4xl font-bold text-center">Thanks for visiting!</h1>
@@ -163,13 +167,14 @@ export default function InQueue() {
           }
         </div>
       </div>
-
-      <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
-        onClick={quitQueue}>
-        {!end
-          ? "Quit Queue"
-          : "Go Home"}
-      </button>
+      { (myPosition > 0 || end) &&
+        <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
+          onClick={quitQueue}>
+          {!end
+            ? "Quit Queue"
+            : "Go Home"}
+        </button>
+      }
     </>
   )
 }

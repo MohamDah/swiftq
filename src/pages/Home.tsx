@@ -12,7 +12,7 @@ export default function Home() {
         src={logo} alt="Logo" />
 
       <button className="rect bg-secondary-purple text-primary-purple mt-14"
-      >Join Queue</button>
+      onClick={() => navigate("/join")}>Join Queue</button>
       <button className="rect bg-primary-purple text-white mt-6"
         onClick={() => navigate("/create")}>Setup Queue</button>
     </>

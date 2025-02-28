@@ -4,41 +4,55 @@
 
 @layer components {
   .rect {
-    @apply w-9/12 py-4 max-w-md border border-primary-purple rounded-lg font-bold
+    @apply w-9/12 py-4 max-w-md border border-primary-purple rounded-lg font-bold transition-all hover:shadow-xl hover:scale-[1.02] active:outline-indigo-400
   }
-/* 
-  @keyframes animate {
-    25% {
-      @apply rotate-0
+
+
+  .blob {
+
+    box-shadow: 0 0 0 0 rgba(140, 82, 255, 1);
+    transform: scale(1);
+    animation: pulse 3s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(140, 82, 255, .7);
     }
 
-    50% {
-      @apply rotate-90
-    }
-
-    75% {
-      @apply rotate-180
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(140, 82, 255, 0);
     }
 
     100% {
-      transform: rotate(270deg);
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(140, 82, 255, 0);
     }
   }
 
-  .animate {
-  
-  }
-  
-  .animate::after {
-    content: "";
-    height: calc(50% + 24px);
-    @apply absolute -translate-x-1/2 origin-bottom top-1/2 left-1/2 w-4 bg-black/50;
-    
-    transform: rotate(0deg);
+  .blob-green {
 
-    animation-name: animate;
-    animation-duration: 4s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-  } */
+    box-shadow: 0 0 0 0 rgba(16, 212, 127, 1);
+    transform: scale(1);
+    animation: pulse-green 3s infinite;
+  }
+
+  @keyframes pulse-green {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(16, 212, 127, .7);
+    }
+
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(16, 212, 127, 0);
+    }
+
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(16, 212, 127, 0);
+    }
+  }
 }
