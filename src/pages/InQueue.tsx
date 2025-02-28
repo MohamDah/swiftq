@@ -49,7 +49,7 @@ export default function InQueue() {
 
     return () => unsubscribe()
 
-  }, [qId, queue, errMessage])
+  }, [])
 
   async function insertToQ() {
     if (!queue) return
