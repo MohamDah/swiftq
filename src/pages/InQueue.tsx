@@ -19,8 +19,8 @@ export default function InQueue() {
 
   useEffect(() => {
 
-    onValue(ref(db, `queues/${qId}`), snapshot => {
-      const queueData = snapshot.val()
+    const unsubscribe = onValue(ref(db, `queues/${qId}`), snapshot => {
+      const queueData : QueueType = snapshot.val()
       if (queueData === null) {
         delete myQueues[qId]
         localStorage.setItem("myQueues", JSON.stringify(myQueues))
@@ -35,18 +35,20 @@ export default function InQueue() {
         return
       }
 
-      if (!queue || queue.participants && queueData.participants.length !== queue.participants.length || queueData.currentPosition !== queue.currentPosition) {
+      if (!queue || (queue.participants && queueData.participants && queueData.participants.length !== queue.participants.length) || queueData.currentPosition !== queue.currentPosition) {
         setQueue(queueData)
+      }
+
+      if (queueData.currentPosition > myQueues[qId] && !errMessage) {
+        delete myQueues[qId]
+        localStorage.setItem("myQueues", JSON.stringify(myQueues))
+        setErrMessage("Thanks for visiting!")
       }
     })
 
-  }, [qId, queue, errMessage])
+    return () => unsubscribe()
 
-  // useEffect(() => {
-  //   if (queue) {
-  //     setEta(Math.round((queue.waitTimes.reduce((a, i) => a + i, 0) / queue.waitTimes.length - 1) * 10) / 10)
-  //   }
-  // }, [queue?.currentPosition])
+  }, [qId, queue, errMessage])
 
   async function insertToQ() {
     if (!queue) return
@@ -114,13 +116,16 @@ export default function InQueue() {
 
   const frmtMyPosition = myPosition.toString().at(-1) === "1" ? myPosition + "st" : myPosition.toString().at(-1) === "2" ? myPosition + "nd" : myPosition.toString().at(-1) === "3" ? myPosition + "rd" : myPosition + "th"
 
+  // Get eta
   let eta = Math.round((queue.waitTimes.reduce((a, i) => a + i, 0) / queue.waitTimes.length - 1) * 10) / 10
+  eta = eta !== -1 ? eta * myPosition : eta
+  let etaMessage = eta < 60 ? `${eta} seconds` : `${(eta / 60).toFixed(1)} minutes`
 
 
   if (!myQueues[qId]) {
     return (
       <>
-        <p className="mt-36 text-primary-purple font-bold">You are about to join queue: "{queue.queueName}"</p>
+        <p className="mt-36 text-primary-purple font-bold text-center">You are about to join queue: "{queue.queueName}"</p>
         <button className="rect mt-6"
           onClick={insertToQ} disabled={btnDisabled}>Join</button>
       </>
@@ -128,16 +133,25 @@ export default function InQueue() {
   }
   return (
     <>
-      <div className={`w-10/12 max-w-sm aspect-square border-[24px] rounded-full mt-28 ${myPosition > 0 ? "border-primary-purple" : "border-primary-green"}`}>
-        <div className="w-full h-full flex flex-col items-center justify-center gap-5">
-          <p>Your number is #{myQueues[qId]}</p>
-          {
-            myPosition > 0
-              ? <h1 className="text-4xl font-bold text-center">You are {frmtMyPosition} in the queue</h1>
-              : <h1 className="text-4xl font-bold text-center">It's your turn now!</h1>
-          }
-          <p>-{myPosition > 0 ? "almost there!" : "You're invited!"}</p>
-          <p>ETA: {eta} Seconds</p>
+      <div className={`w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full mt-28 ${myPosition > 0 ? "border-primary-purple" : "border-primary-green"}`}>
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 xs:gap-5 text-center">
+          <p className="text-sm xs:text-base">Your number is #{myQueues[qId]}</p>
+          <h1 className="text-3xl xs:text-4xl font-bold text-center">
+            {
+              myPosition > 0
+              ? `You are ${frmtMyPosition} in the queue`
+              : `It's your turn now!`
+            }
+          </h1>
+          <p className="text-sm xs:text-base">
+            {
+              eta > 0
+              ? `ETA: ${etaMessage}`
+              : eta === -1 
+              ? `Queue will start soon`
+              : `At long last!`
+            }
+          </p>
         </div>
       </div>
 

@@ -97,19 +97,19 @@ export default function Admin() {
 
 
   const ownUrl = new URL(window.location.href).origin
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${ownUrl}/${qId}&size=150x150`
-  if (showQR) {
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${ownUrl}/${qId}&size=250x250`
+  const qrComponent = (
+    <>
+      <div className="mt-10 p-2 border-2 border-primary-purple rounded-lg w-6/12 max-w-xs">
+        <img className="w-full"
+        src={qrUrl} alt="" />
+      </div>
+      <button className="rect mt-8 text-primary-purple"
+        onClick={() => setShowQR(false)}>Go Back</button>
+    </>
+  )
 
-    return (
-      <>
-        <div className="mt-32 p-2 border-2 border-primary-purple rounded-lg">
-          <img src={qrUrl} alt="" />
-        </div>
-        <button className="rect mt-8 text-primary-purple"
-          onClick={() => setShowQR(false)}>Go Back</button>
-      </>
-    )
-  }
+
 
   return (
     <>
@@ -123,30 +123,37 @@ export default function Admin() {
         waiting
       </h2>
 
-      <h1 className="font-bold text-xl mt-16">Invited visitor number</h1>
-
-      <div className="bg-secondary-purple text-primary-purple text-8xl font-bold py-4 w-9/12 max-w-64 text-center mt-10">
-        {queue.currentPosition}
-      </div>
-
-      <button className={"rect bg-primary-purple text-white mt-12" + (custsLeft > 0 ? "" : " opacity-40")}
-        onClick={inviteNext} disabled={!custsLeft}>
-        {
-          custsLeft > 0
-            ? "Invite next visitor"
-            : "Queue is empty"
-        }
-      </button>
-
       {
-        !confClose
-          ? <button className="rect text-primary-purple mt-6"
-            onClick={toggleConf}>Close Queue</button>
-          : <button className="rect text-white bg-red-500 mt-6 border-red-500"
-            onClick={closeQueue}>Are you sure?</button>
+        showQR
+          ? qrComponent
+          :
+          <>
+            <h1 className="font-bold text-xl mt-16">Invited visitor number</h1>
+
+            <div className="bg-secondary-purple text-primary-purple text-8xl font-bold py-4 w-9/12 max-w-64 text-center mt-10">
+              {queue.currentPosition}
+            </div>
+
+            <button className={"rect bg-primary-purple text-white mt-12" + (custsLeft > 0 ? "" : " opacity-40")}
+              onClick={inviteNext} disabled={!custsLeft}>
+              {
+                custsLeft > 0
+                  ? "Invite next visitor"
+                  : "Queue is empty"
+              }
+            </button>
+
+            {
+              !confClose
+                ? <button className="rect text-primary-purple mt-6"
+                  onClick={toggleConf}>Close Queue</button>
+                : <button className="rect text-white bg-red-500 mt-6 border-red-500"
+                  onClick={closeQueue}>Are you sure?</button>
+            }
+            <button className="text-primary-purple font-semibold underline mt-6"
+              onClick={() => setShowQR(true)}>Show QR code</button>
+          </>
       }
-      <button className="text-primary-purple font-semibold underline mt-6"
-        onClick={() => setShowQR(true)}>Show QR code</button>
     </>
   )
 

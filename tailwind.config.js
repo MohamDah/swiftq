@@ -17,6 +17,9 @@ export default {
       },
       fontFamily: {
         inter: ['"Inter"', 'serif']
+      },
+      screens: {
+        xs: "375px"
       }
     },
   },
