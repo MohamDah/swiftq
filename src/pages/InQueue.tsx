@@ -10,6 +10,7 @@ export default function InQueue() {
   const [queue, setQueue] = useState(null as QueueType | null)
   const [btnDisabled, setBtnDisabled] = useState(false)
   const [errMessage, setErrMessage] = useState(false as false | string)
+  const [end, setEnd] = useState(false)
   // const [eta, setEta] = useState(0)
   const { qId } = useParams() as { qId: string }
   const navigate = useNavigate()
@@ -20,7 +21,7 @@ export default function InQueue() {
   useEffect(() => {
 
     const unsubscribe = onValue(ref(db, `queues/${qId}`), snapshot => {
-      const queueData : QueueType = snapshot.val()
+      const queueData: QueueType = snapshot.val()
       if (queueData === null) {
         delete myQueues[qId]
         localStorage.setItem("myQueues", JSON.stringify(myQueues))
@@ -40,9 +41,9 @@ export default function InQueue() {
       }
 
       if (queueData.currentPosition > myQueues[qId] && !errMessage) {
-        delete myQueues[qId]
-        localStorage.setItem("myQueues", JSON.stringify(myQueues))
-        setErrMessage("Thanks for visiting!")
+        // delete myQueues[qId]
+        // localStorage.setItem("myQueues", JSON.stringify(myQueues))
+        setEnd(true)
       }
     })
 
@@ -56,7 +57,7 @@ export default function InQueue() {
     setBtnDisabled(true)
 
     const queueRef = ref(db, `queues/${qId}`)
-    await runTransaction(queueRef, (currentQueue : QueueType) => {
+    await runTransaction(queueRef, (currentQueue: QueueType) => {
       if (currentQueue !== null) {
         if (!currentQueue.participants) {
           myQueues[qId] = 101
@@ -110,8 +111,8 @@ export default function InQueue() {
     }
   }
 
-  
-  
+
+
 
 
   const frmtMyPosition = myPosition.toString().at(-1) === "1" ? myPosition + "st" : myPosition.toString().at(-1) === "2" ? myPosition + "nd" : myPosition.toString().at(-1) === "3" ? myPosition + "rd" : myPosition + "th"
@@ -133,39 +134,42 @@ export default function InQueue() {
   }
   return (
     <>
-      <div className={`w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full mt-28 ${myPosition > 0 ? "border-primary-purple" : "border-primary-green"}`}>
+      <p className="mt-28 w-10/12 max-w-sm"><i className="fa-solid fa-location-dot"></i> {queue.queueName}</p>
+      
+      <div className={`relative w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full transition-all duration-1000 ${myPosition > 0 ? "border-primary-purple" : !end ? "border-primary-green" : "border-transparent"}`}>
         <div className="w-full h-full flex flex-col items-center justify-center gap-1 xs:gap-5 text-center">
-          <p className="text-sm xs:text-base">Your number is #{myQueues[qId]}</p>
-          <h1 className="text-3xl xs:text-4xl font-bold text-center">
-            {
-              myPosition > 0
-              ? `You are ${frmtMyPosition} in the queue`
-              : `It's your turn now!`
-            }
-          </h1>
-          <p className="text-sm xs:text-base">
-            {
-              eta > 0
-              ? `ETA: ${etaMessage}`
-              : eta === -1 
-              ? `Queue will start soon`
-              : `At long last!`
-            }
-          </p>
+          {
+            end
+              ? <h1 className="text-3xl xs:text-4xl font-bold text-center">Thanks for visiting!</h1>
+              : <>
+                <p className="text-sm xs:text-base">Your number is #{myQueues[qId]}</p>
+                <h1 className="text-3xl xs:text-4xl font-bold text-center">
+                  {
+                    myPosition > 0
+                      ? `You are ${frmtMyPosition} in the queue`
+                      : `It's your turn now!`
+                  }
+                </h1>
+                <p className="text-sm xs:text-base">
+                  {
+                    eta > 0
+                      ? `ETA: ${etaMessage}`
+                      : eta === -1
+                        ? `Queue will start soon`
+                        : `At long last!`
+                  }
+                </p>
+              </>
+          }
         </div>
       </div>
 
       <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
-        onClick={quitQueue}>Quit Queue</button>
-    </>
-  )
-
-  return (
-    <>
-      <h1>Your Number {myQueues[qId]}</h1>
-      {myPosition > 0
-        ? <h1>You are number {myPosition} in line</h1>
-        : <h1>It's your turn</h1>}
+        onClick={quitQueue}>
+        {!end
+          ? "Quit Queue"
+          : "Go Home"}
+      </button>
     </>
   )
 }

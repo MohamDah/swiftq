@@ -2,8 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components{
+@layer components {
   .rect {
     @apply w-9/12 py-4 max-w-md border border-primary-purple rounded-lg font-bold
   }
+/* 
+  @keyframes animate {
+    25% {
+      @apply rotate-0
+    }
+
+    50% {
+      @apply rotate-90
+    }
+
+    75% {
+      @apply rotate-180
+    }
+
+    100% {
+      transform: rotate(270deg);
+    }
+  }
+
+  .animate {
+  
+  }
+  
+  .animate::after {
+    content: "";
+    height: calc(50% + 24px);
+    @apply absolute -translate-x-1/2 origin-bottom top-1/2 left-1/2 w-4 bg-black/50;
+    
+    transform: rotate(0deg);
+
+    animation-name: animate;
+    animation-duration: 4s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  } */
 }
