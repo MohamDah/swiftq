@@ -2,10 +2,8 @@
 import { useRef, useState } from "react"
 import logo from "../assets/logo.png"
 import { useNavigate } from "react-router-dom"
-import { randStr } from "../utils"
-import { get, ref, set } from "firebase/database"
+import { get, ref } from "firebase/database"
 import { db } from "../firebase"
-import { QueueType } from "../types"
 
 export default function Join() {
   const qIdRef = useRef(null as null | HTMLInputElement)
