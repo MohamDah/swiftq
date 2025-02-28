@@ -30,6 +30,21 @@ export default function Admin() {
     return () => unsubscribe()
   }, [])
 
+  // useEffect(() => {
+  //   // What I'm trying to do here is, when it reaches the guest's turn, 
+  //   // it calculates the length of time they spent in the queue in seconds, 
+  //   // and insert it into queue.waitTimes
+  //   if (queue) {
+  //     const newQueue = {...queue}
+  //     let timeSecs = new Date().getTime() - newQueue.enterTimes[queue.currentPosition]
+  //     timeSecs = timeSecs / 1000
+  //     newQueue.waitTimes.push(timeSecs)
+  //     delete newQueue.enterTimes[queue.currentPosition]
+  //     set(ref(db, `queues/${qId}`), newQueue)
+  //   }
+  // }, [queue?.currentPosition])
+
+
   useEffect(() => {
     if (queue && adminId !== queue.adminId && !errMessage) {
       setErrMessage("Queue not found")
@@ -50,6 +65,11 @@ export default function Admin() {
     if (Array.isArray(queue?.participants)) {
       const nextNum = queue.participants[queue?.participants.indexOf(queue.currentPosition) + 1]
       queue.currentPosition = nextNum
+
+      let timeSecs = new Date().getTime() - queue.enterTimes[queue.currentPosition]
+      timeSecs = timeSecs / 1000
+      queue.waitTimes.push(timeSecs)
+      delete queue.enterTimes[queue.currentPosition]
 
       set(ref(db, `queues/${qId}`), queue)
     }

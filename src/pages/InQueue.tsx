@@ -10,6 +10,7 @@ export default function InQueue() {
   const [queue, setQueue] = useState(null as QueueType | null)
   const [btnDisabled, setBtnDisabled] = useState(false)
   const [errMessage, setErrMessage] = useState(false as false | string)
+  // const [eta, setEta] = useState(0)
   const { qId } = useParams() as { qId: string }
   const navigate = useNavigate()
 
@@ -41,20 +42,11 @@ export default function InQueue() {
 
   }, [qId, queue, errMessage])
 
-  useEffect(() => {
-    // What I'm trying to do here is, when it reaches the guest's turn, 
-    // it calculates the length of time they spent in the queue in seconds, 
-    // and insert it into queue.waitTimes
-    if (queue && queue.currentPosition === myQueues[qId]) {
-      const newQueue = {...queue}
-      let timeSecs = new Date().getTime() - newQueue.enterTimes[myQueues[qId]]
-      timeSecs = timeSecs / 1000
-      newQueue.waitTimes.push(timeSecs)
-      delete newQueue.enterTimes[myQueues[qId]]
-      set(ref(db, `queues/${qId}`), newQueue)
-    }
-    console.log(queue?.currentPosition)
-  }, [queue?.currentPosition])
+  // useEffect(() => {
+  //   if (queue) {
+  //     setEta(Math.round((queue.waitTimes.reduce((a, i) => a + i, 0) / queue.waitTimes.length - 1) * 10) / 10)
+  //   }
+  // }, [queue?.currentPosition])
 
   async function insertToQ() {
     if (!queue) return
@@ -122,6 +114,8 @@ export default function InQueue() {
 
   const frmtMyPosition = myPosition.toString().at(-1) === "1" ? myPosition + "st" : myPosition.toString().at(-1) === "2" ? myPosition + "nd" : myPosition.toString().at(-1) === "3" ? myPosition + "rd" : myPosition + "th"
 
+  let eta = Math.round((queue.waitTimes.reduce((a, i) => a + i, 0) / queue.waitTimes.length - 1) * 10) / 10
+
 
   if (!myQueues[qId]) {
     return (
@@ -143,7 +137,7 @@ export default function InQueue() {
               : <h1 className="text-4xl font-bold text-center">It's your turn now!</h1>
           }
           <p>-{myPosition > 0 ? "almost there!" : "You're invited!"}</p>
-          <p>ETA: {Math.round((queue.waitTimes.reduce((a, i) => a + i, 0) / queue.waitTimes.length - 1) * 10) / 10} Seconds</p>
+          <p>ETA: {eta} Seconds</p>
         </div>
       </div>
 
