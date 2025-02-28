@@ -2,7 +2,6 @@ import './App.css'
 import {
   createBrowserRouter,
   createRoutesFromElements,
-  Navigate,
   Route,
   RouterProvider
 } from 'react-router-dom'

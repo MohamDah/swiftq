@@ -1,5 +1,3 @@
-import { useRef } from "react"
-// import { firebase } from "../firebase"
 import { useNavigate } from "react-router-dom"
 import logo from "../assets/logo.png"
 
