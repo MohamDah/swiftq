@@ -3,7 +3,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  RouterProvider
+  RouterProvider,
 } from 'react-router-dom'
 import Home from './pages/Home'
 import Admin from './pages/Admin'
@@ -15,12 +15,13 @@ import Layout from './components/Layout'
 import { useContext } from 'react'
 import ColorContext from './components/ColorContext'
 import OuterLayout from './components/OuterLayout'
+import Error from './components/Error'
 
 
 function App() {
   const router = createBrowserRouter(createRoutesFromElements(
     <>
-      <Route element={<OuterLayout />}>
+      <Route element={<OuterLayout />} errorElement={<Error />}>
         <Route path='/' element={<Home />} />
         <Route path='/a/:qId/:adminId' element={<Admin />} />
         <Route path='/:qId' element={<InQueue />} />

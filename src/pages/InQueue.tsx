@@ -41,17 +41,27 @@ export default function InQueue() {
 
       if (!queue || (queue.participants && queueData.participants && queueData.participants.length !== queue.participants.length) || queueData.currentPosition !== queue.currentPosition) {
         setQueue(queueData)
+        return
       }
 
-      if (queueData.currentPosition > myQueues[qId]) {
-        setColor("green")
-        setEnd(true)
-      }
+      console.log(queue.currentPosition)
+      
+
+      setQueue({...queue})
     })
 
     return () => unsubscribe()
 
   }, [])
+
+  useEffect(() => {
+    if (queue) {
+      if (queue.currentPosition > myQueues[qId]) {
+        setEnd(true)
+        return
+      }
+    }
+  }, [queue])
 
   async function insertToQ() {
     if (!queue) return
