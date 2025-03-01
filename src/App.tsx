@@ -14,7 +14,6 @@ import Join from './pages/Join'
 import Layout from './components/Layout'
 import { useContext } from 'react'
 import ColorContext from './components/ColorContext'
-import Translate from './components/Translate'
 import OuterLayout from './components/OuterLayout'
 
 
