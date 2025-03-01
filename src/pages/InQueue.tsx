@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { db } from "../firebase"
 import { onValue, ref, runTransaction, set } from "firebase/database"
 import { useNavigate, useParams } from "react-router-dom"
 import { QueueType } from "../types"
 import Loading from "../components/Loading"
 import NotFound from "../components/NotFound"
+import ColorContext from "../components/ColorContext"
 
 export default function InQueue() {
   const [queue, setQueue] = useState(null as QueueType | null)
@@ -17,6 +18,8 @@ export default function InQueue() {
 
   if (!localStorage.getItem("myQueues")) localStorage.setItem("myQueues", '{}')
   const myQueues = (JSON.parse(localStorage.getItem("myQueues") || "{}"))
+
+  const {color, setColor} = useContext(ColorContext)
 
   useEffect(() => {
 
@@ -41,8 +44,6 @@ export default function InQueue() {
       }
 
       if (queueData.currentPosition > myQueues[qId] && !errMessage) {
-        // delete myQueues[qId]
-        // localStorage.setItem("myQueues", JSON.stringify(myQueues))
         setEnd(true)
       }
     })
@@ -72,6 +73,7 @@ export default function InQueue() {
       localStorage.setItem("myQueues", JSON.stringify(myQueues))
       setBtnDisabled(false)
 
+      setQueue(currentQueue)
       return currentQueue
     })
   }
@@ -112,7 +114,9 @@ export default function InQueue() {
   }
 
 
-
+  if (myQueues[qId] === queue.currentPosition && color !== "green"){
+    setColor("green")
+  }
 
 
   const frmtMyPosition = myPosition.toString().at(-1) === "1" ? myPosition + "st" : myPosition.toString().at(-1) === "2" ? myPosition + "nd" : myPosition.toString().at(-1) === "3" ? myPosition + "rd" : myPosition + "th"
@@ -126,7 +130,7 @@ export default function InQueue() {
   if (!myQueues[qId]) {
     return (
       <>
-        <p className="mt-36 text-primary-purple font-bold text-center">You are about to join queue: "{queue.queueName}"</p>
+        <p className="mt-36 text-primary-purple font-bold text-center w-11/12">You are about to join queue: "{queue.queueName}"</p>
         <button className="rect mt-6"
           onClick={insertToQ} disabled={btnDisabled}>Join</button>
       </>
@@ -136,11 +140,11 @@ export default function InQueue() {
   const blobCls = myPosition > 0 ? "blob" : !end ? "blob-green" : ""
   return (
     <>
-      <p className={"mt-20 w-10/12 max-w-sm font-bold " + (myPosition > 0 ? "text-primary-purple" : "text-primary-green") + (end ? " invisible" : "")}>
-      <i className="fa-solid fa-location-dot"></i> {queue.queueName}
+      <p className={"mt-20 w-10/12 max-w-md font-bold " + (myPosition > 0 ? "text-primary-purple" : "text-primary-green") + (end ? " invisible" : "")}>
+        <i className="fa-solid fa-location-dot"></i> {queue.queueName}
       </p>
 
-      <div className={`${blobCls} relative w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full transition-all duration-500 ${myPosition > 0 ? "border-primary-purple" : !end ? "border-primary-green" : "border-transparent"}`}>
+      <div className={`${blobCls} relative bg-white w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full transition-all duration-500 ${myPosition > 0 ? "border-primary-purple" : !end ? "border-primary-green" : "duration-1000 border-transparent bg-transparent"}`}>
         <div className="w-full h-full flex flex-col items-center justify-center gap-1 xs:gap-5 text-center py-8">
           {
             end
@@ -167,14 +171,14 @@ export default function InQueue() {
           }
         </div>
       </div>
-      { (myPosition > 0 || end) &&
-        <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
-          onClick={quitQueue}>
-          {!end
-            ? "Quit Queue"
-            : "Go Home"}
-        </button>
-      }
+      {/* { (myPosition > 0 || end) && */}
+      <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
+        onClick={quitQueue}>
+        {!end
+          ? "Quit Queue"
+          : "Go Home"}
+      </button>
+      {/* } */}
     </>
   )
 }

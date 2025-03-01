@@ -4,8 +4,12 @@
 
 @layer components {
   .rect {
-    @apply w-9/12 py-4 max-w-md border border-primary-purple rounded-lg font-bold transition-all hover:shadow-xl hover:scale-[1.02] active:outline-indigo-400
+    @apply w-9/12 py-2 xs:py-4 max-w-md border border-primary-purple rounded-lg font-bold transition-all hover:shadow-xl hover:scale-[1.02] active:outline-indigo-400
   }
+
+  /* .myGradient {
+    background: linear-gradient(0deg, rgba(140,82,255,1) 0%, rgba(249,11,196,0) 100%);
+  } */
 
 
   .blob {

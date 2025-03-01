@@ -101,7 +101,7 @@ export default function Admin() {
   return (
     <>
       <img src={qrUrl} className="hidden"></img>
-      <h2 className="mt-20 text-primary-purple font-bold"><i className="fa-solid fa-location-dot"></i> {queue.queueName}</h2>
+      <h2 className="mt-20 text-primary-purple font-bold w-10/12 max-w-md"><i className="fa-solid fa-location-dot"></i> {queue.queueName}</h2>
       <h2 className="text-primary-purple mt-2">There
         {
           custsLeft === 1
