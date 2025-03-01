@@ -5,7 +5,7 @@ export default function Layout() {
  
   return (
     <>
-      <button className='w-10/12 max-w-md text-start mt-14 mb-5 text-primary-purple underline'
+      <button className='w-10/12 max-w-md text-start mt-16 mb-5 text-primary-purple underline'
       onClick={() => navigate("/")}><i className="fa-solid fa-left-long"></i> Go Home</button>
       <Outlet />
     </>
