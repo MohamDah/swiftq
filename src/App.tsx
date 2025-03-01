@@ -39,7 +39,7 @@ function App() {
   return (
     <>
     
-      <main className={`relative font-inter w-full mx-auto flex flex-col items-center h-[100svh] border bg-gradient-to-tl via-50% via-transparent ${color === "purple" ? "from-primary-purple/60 to-secondary-purple" : "from-primary-green/75 to-primary-green/30"}`}>
+      <main className={`relative font-inter w-full mx-auto flex flex-col items-center min-h-[100svh] pb-5 border bg-gradient-to-tl via-50% via-transparent ${color === "purple" ? "from-primary-purple/60 to-secondary-purple" : "from-primary-green/75 to-primary-green/30"}`}>
         <RouterProvider router={router} />
         <Translate />
       </main>

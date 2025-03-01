@@ -19,7 +19,7 @@ export default function InQueue() {
   if (!localStorage.getItem("myQueues")) localStorage.setItem("myQueues", '{}')
   const myQueues = (JSON.parse(localStorage.getItem("myQueues") || "{}"))
 
-  const {color, setColor} = useContext(ColorContext)
+  const { color, setColor } = useContext(ColorContext)
 
   useEffect(() => {
 
@@ -43,7 +43,7 @@ export default function InQueue() {
         setQueue(queueData)
       }
 
-      if (queueData.currentPosition > myQueues[qId] && !errMessage) {
+      if (queueData.currentPosition > myQueues[qId]) {
         setEnd(true)
       }
     })
@@ -58,7 +58,7 @@ export default function InQueue() {
     setBtnDisabled(true)
 
     const queueRef = ref(db, `queues/${qId}`)
-    await runTransaction(queueRef, (currentQueue: QueueType) => {
+    const res = await runTransaction(queueRef, (currentQueue: QueueType) => {
       if (currentQueue !== null) {
         if (!currentQueue.participants) {
           myQueues[qId] = 101
@@ -72,10 +72,13 @@ export default function InQueue() {
 
       localStorage.setItem("myQueues", JSON.stringify(myQueues))
       setBtnDisabled(false)
-
-      // setQueue(currentQueue)
       return currentQueue
     })
+    if (res.snapshot.val()) {
+      setQueue(res.snapshot.val())
+    } else {
+      console.log("error")
+    }
   }
 
 
@@ -114,7 +117,7 @@ export default function InQueue() {
   }
 
 
-  if (myQueues[qId] === queue.currentPosition && color !== "green"){
+  if (myQueues[qId] === queue.currentPosition && color !== "green") {
     setColor("green")
   }
 
@@ -144,7 +147,7 @@ export default function InQueue() {
         <i className="fa-solid fa-location-dot"></i> {queue.queueName}
       </p>
 
-      <div className={`${blobCls} relative bg-white w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full transition-all duration-500 ${myPosition > 0 ? "border-primary-purple" : !end ? "border-primary-green" : "duration-1000 border-transparent bg-transparent"}`}>
+      <div className={`${blobCls} relative w-10/12 max-w-sm aspect-square border-[18px] xs:border-[24px] rounded-full transition-all duration-500 ${myPosition > 0 ? "border-primary-purple bg-white" : !end ? "border-primary-green bg-white" : "duration-1000 border-transparent bg-transparent"}`}>
         <div className="w-full h-full flex flex-col items-center justify-center gap-1 xs:gap-5 text-center py-8">
           {
             end
@@ -174,7 +177,7 @@ export default function InQueue() {
       {/* { (myPosition > 0 || end) && */}
       <button className={`rect text-white mt-10 ${myPosition > 0 ? "bg-primary-purple" : "bg-primary-green border-primary-green"}`}
         onClick={quitQueue}>
-        {!end
+        {queue.currentPosition !== myQueues[qId]
           ? "Quit Queue"
           : "Go Home"}
       </button>
