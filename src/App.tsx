@@ -15,33 +15,34 @@ import Layout from './components/Layout'
 import { useContext } from 'react'
 import ColorContext from './components/ColorContext'
 import Translate from './components/Translate'
+import OuterLayout from './components/OuterLayout'
 
 
 function App() {
   const router = createBrowserRouter(createRoutesFromElements(
     <>
-
-      <Route path='/' element={<Home />} />
-      <Route path='/a/:qId/:adminId' element={<Admin />} />
-      <Route path='/:qId' element={<InQueue />} />
-      <Route element={<Layout />}>
-        <Route path='/create' element={<Create />} />
-        <Route path='/join' element={<Join />} />
+      <Route element={<OuterLayout />}>
+        <Route path='/' element={<Home />} />
+        <Route path='/a/:qId/:adminId' element={<Admin />} />
+        <Route path='/:qId' element={<InQueue />} />
+        <Route element={<Layout />}>
+          <Route path='/create' element={<Create />} />
+          <Route path='/join' element={<Join />} />
+        </Route>
+        <Route path='*' element={<NotFound message='Page not found' />} />
       </Route>
-      <Route path='*' element={<NotFound message='Page not found' />} />
     </>
   ))
 
-  const {color} = useContext(ColorContext)
+  const { color } = useContext(ColorContext)
 
-  
+
 
   return (
     <>
-    
+
       <main className={`relative font-inter w-full mx-auto flex flex-col items-center min-h-[100svh] pb-5 border bg-gradient-to-tl via-50% via-transparent ${color === "purple" ? "from-primary-purple/60 to-secondary-purple" : "from-primary-green/75 to-primary-green/30"}`}>
         <RouterProvider router={router} />
-        <Translate />
       </main>
     </>
   )

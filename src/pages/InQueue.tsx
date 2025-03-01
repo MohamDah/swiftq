@@ -44,6 +44,7 @@ export default function InQueue() {
       }
 
       if (queueData.currentPosition > myQueues[qId]) {
+        setColor("green")
         setEnd(true)
       }
     })
