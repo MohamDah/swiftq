@@ -73,7 +73,7 @@ export default function InQueue() {
       localStorage.setItem("myQueues", JSON.stringify(myQueues))
       setBtnDisabled(false)
 
-      setQueue(currentQueue)
+      // setQueue(currentQueue)
       return currentQueue
     })
   }
