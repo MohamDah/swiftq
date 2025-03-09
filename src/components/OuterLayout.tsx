@@ -7,7 +7,7 @@ export default function OuterLayout() {
   return (
     <>
       <Outlet />
-      <Translate />
+      {/* <Translate /> */}
     </>
   )
 }
