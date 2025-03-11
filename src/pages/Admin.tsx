@@ -1,10 +1,11 @@
-import { onValue, ref, remove, set } from "firebase/database"
+import { onValue, ref, remove, runTransaction, set } from "firebase/database"
 import { useNavigate, useParams } from "react-router-dom"
 import { db } from "../firebase"
 import { useEffect, useState } from "react"
 import { QueueType } from "../types"
 import Loading from "../components/Loading"
 import NotFound from "../components/NotFound"
+import Removing from "../components/Removing"
 
 export default function Admin() {
   const { qId, adminId } = useParams()
@@ -13,10 +14,14 @@ export default function Admin() {
   const [showQR, setShowQR] = useState(false)
   const [confClose, setConfClose] = useState(false)
   const [errMessage, setErrMessage] = useState(false as false | string)
+  const [removing, setRemoving] = useState(false)
+
+  const queueRef = ref(db, `queues/${qId}`)
+
 
 
   useEffect(() => {
-    const queueRef = ref(db, `queues/${qId}`)
+    // const queueRef = ref(db, `queues/${qId}`)
     const unsubscribe = onValue(queueRef, snapshot => {
       const queueData = snapshot.val()
       if (queueData === null && !errMessage) {
@@ -72,6 +77,27 @@ export default function Admin() {
   function toggleConf() {
     setConfClose(true)
     setTimeout(() => setConfClose(false), 3000)
+  }
+
+  async function addVisitor() {
+    if (!queue) return
+        const res = await runTransaction(queueRef, (currentQueue: QueueType) => {
+          if (currentQueue !== null) {
+            if (!currentQueue.participants) {
+              currentQueue.participants = [101]
+            } else {
+              currentQueue.participants.push(currentQueue.participants.at(-1) as number + 1)
+            }
+            currentQueue.enterTimes[currentQueue.participants.at(-1) as number] = new Date().getTime()
+          }
+    
+          return currentQueue
+        })
+        if (res.snapshot.val()) {
+          setQueue(res.snapshot.val())
+        } else {
+          console.log("error")
+        }
   }
 
   let custsLeft
@@ -131,15 +157,25 @@ export default function Admin() {
               }
             </button>
 
-            {
-              !confClose
-                ? <button className="rect text-primary-purple mt-6"
-                  onClick={toggleConf}>Close Queue</button>
-                : <button className="rect text-white bg-red-500 mt-6 border-red-500"
-                  onClick={closeQueue}>Are you sure?</button>
-            }
-            <button className="text-primary-purple font-semibold underline mt-6"
+
+            <button className="rect bg-primary-purple text-white mt-4"
+              onClick={addVisitor}>Add visitor</button>
+
+
+            <button className={"rect bg-red-100 text-red-500 border-red-500 mt-4 " + (custsLeft? "opacity-100" : "opacity-50")}
+              onClick={() => setRemoving(true)}
+              disabled={!custsLeft}>Remove visitor</button>
+              {
+                !confClose
+                  ? <button className="rect text-primary-purple mt-4"
+                    onClick={toggleConf}>Close Queue</button>
+                  : <button className="rect text-white bg-red-500 mt-4 border-red-500"
+                    onClick={closeQueue}>Are you sure?</button>
+              }
+            <button className="text-primary-purple font-semibold underline mt-4"
               onClick={() => setShowQR(true)}>Show QR code</button>
+            
+            {removing && <Removing queueRef={queueRef} setRemoving={setRemoving} queue={queue} />}
           </>
       }
     </>

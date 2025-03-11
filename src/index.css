@@ -19,6 +19,14 @@
     animation: pulse 3s infinite;
   }
 
+  /* * {
+    scrollbar-gutter: stable;
+  } */
+  body {
+    width: 100svw;
+    overflow-x: hidden;
+  }
+
   @keyframes pulse {
     0% {
       transform: scale(0.95);

@@ -38,13 +38,13 @@ export default function InQueue() {
         }
         return
       }
+      
 
       if (!queue || (queue.participants && queueData.participants && queueData.participants.length !== queue.participants.length) || queueData.currentPosition !== queue.currentPosition) {
         setQueue(queueData)
         return
       }
 
-      console.log(queue.currentPosition)
       
 
       setQueue({...queue})
@@ -56,11 +56,19 @@ export default function InQueue() {
 
   useEffect(() => {
     if (queue) {
+      if (queue?.participants && myQueues[qId] && !queue.participants.some(i => i === myQueues[qId])){
+        delete myQueues[qId]
+        localStorage.setItem("myQueues", JSON.stringify(myQueues))
+        setErrMessage("You were removed from the queue")
+        return
+      }
+
       if (queue.currentPosition > myQueues[qId]) {
         setEnd(true)
         return
       }
     }
+
   }, [queue])
 
   async function insertToQ() {
